@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dibujar Figuras en Canvas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 1000px; /* Aumentado para un canvas más grande */
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select, .form-group button {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #myCanvas {
+            border: 1px solid black;
+            margin-top: 20px;
+            width: 100%; /* Canvas más grande */
+            height: 600px; /* Canvas más grande */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dibujar Figuras en Canvas</h1>
+        <form id="figureForm">
+            <!-- Cuadro desplegable para seleccionar el sistema de coordenadas -->
+            <div class="form-group">
+                <label for="coordSystem">Sistema de coordenadas:</label>
+                <select id="coordSystem" name="coordSystem">
+                    <option value="cartesian">Cartesianas</option>
+                    <option value="polar">Polares</option>
+                </select>
+            </div>
+
+            <!-- Cuadro desplegable para seleccionar una figura -->
+            <div class="form-group">
+                <label for="figureSelect">Selecciona una figura:</label>
+                <select id="figureSelect" name="figureSelect">
+                    <option value="">Selecciona</option>
+                    <option value="circle">Círculo</option>
+                    <option value="square">Cuadrado</option>
+                    <option value="rectangle">Rectángulo</option>
+                    <option value="triangle">Triángulo</option>
+                </select>
+            </div>
+
+            <!-- Campos adicionales -->
+            <div class="form-group">
+                <label for="xCoord">Posición X:</label>
+                <input type="number" id="xCoord" name="xCoord">
+            </div>
+            <div class="form-group">
+                <label for="yCoord">Posición Y:</label>
+                <input type="number" id="yCoord" name="yCoord">
+            </div>
+            <div class="form-group">
+                <label for="size">Tamaño (radio, tamaño del lado o ancho):</label>
+                <input type="number" id="size" name="size">
+            </div>
+            <div class="form-group" id="heightField" style="display:none;">
+                <label for="height">Altura (para rectángulo y triángulo):</label>
+                <input type="number" id="height" name="height">
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="form-group">
+                <button type="button" onclick="drawFigure()">Dibujar Figura</button>
+                <button type="button" onclick="clearCanvas()">Limpiar Canvas</button>
+                <button type="button" onclick="exit()">Salir</button>
+            </div>
+        </form>
+
+        <!-- Canvas para dibujar -->
+        <canvas id="myCanvas"></canvas>
+    </div>
+
+    <!-- Incluir el archivo JavaScript -->
+    <script src="figuras2D.js"></script>
+</body>
+</html>
