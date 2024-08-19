@@ -10,7 +10,7 @@
             margin: 20px;
         }
         .container {
-            max-width: 1000px; /* Aumentado para un canvas más grande */
+            max-width: 1000px;
             margin: auto;
         }
         .form-group {
@@ -32,8 +32,8 @@
         #myCanvas {
             border: 1px solid black;
             margin-top: 20px;
-            width: 100%; /* Canvas más grande */
-            height: 600px; /* Canvas más grande */
+            width: 100%;
+            height: 600px;
         }
     </style>
 </head>
@@ -41,6 +41,12 @@
     <div class="container">
         <h1>Dibujar Figuras en Canvas</h1>
         <form id="figureForm">
+            <!-- Título del canvas -->
+            <div class="form-group">
+                <label for="canvasTitle">Título del Canvas:</label>
+                <input type="text" id="canvasTitle" name="canvasTitle" placeholder="Escribe el título aquí">
+            </div>
+
             <!-- Cuadro desplegable para seleccionar el sistema de coordenadas -->
             <div class="form-group">
                 <label for="coordSystem">Sistema de coordenadas:</label>
@@ -62,14 +68,30 @@
                 </select>
             </div>
 
-            <!-- Campos adicionales -->
+            <!-- Campo para seleccionar el color de la figura -->
             <div class="form-group">
-                <label for="xCoord">Posición X:</label>
-                <input type="number" id="xCoord" name="xCoord">
+                <label for="colorPicker">Selecciona el color de la figura:</label>
+                <input type="color" id="colorPicker" name="colorPicker" value="#000000">
             </div>
-            <div class="form-group">
-                <label for="yCoord">Posición Y:</label>
-                <input type="number" id="yCoord" name="yCoord">
+			<div class="form-group" id="xCoordField">
+    <label for="xCoord">Posición X:</label>
+    <input type="number" id="xCoord" name="xCoord">
+</div>
+<div class="form-group" id="yCoordField">
+    <label for="yCoord">Posición Y:</label>
+    <input type="number" id="yCoord" name="yCoord">
+</div>
+<div id="polarCoordFields" style="display:none;">
+    <div class="form-group">
+        <label for="radius">Radio:</label>
+        <input type="number" id="radius" name="radius">
+    </div>
+    <div class="form-group">
+        <label for="angle">Ángulo (grados):</label>
+        <input type="number" id="angle" name="angle">
+    </div>
+</div>
+            <!-- Campos adicionales -->
             </div>
             <div class="form-group">
                 <label for="size">Tamaño (radio, tamaño del lado o ancho):</label>

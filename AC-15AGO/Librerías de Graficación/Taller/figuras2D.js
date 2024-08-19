@@ -2,64 +2,93 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
+// Función para manejar la selección del sistema de coordenadas
+function updateCoordFields() {
+    const coordSystem = document.getElementById('coordSystem').value;
+    const xCoordField = document.getElementById('xCoordField');
+    const yCoordField = document.getElementById('yCoordField');
+    const polarCoordFields = document.getElementById('polarCoordFields');
+    
+    if (coordSystem === 'polar') {
+        xCoordField.style.display = 'none';
+        yCoordField.style.display = 'none';
+        polarCoordFields.style.display = 'block';
+    } else {
+        xCoordField.style.display = 'block';
+        yCoordField.style.display = 'block';
+        polarCoordFields.style.display = 'none';
+    }
+}
+
 function drawFigure() {
+    const canvasTitle = document.getElementById('canvasTitle').value;
+    const color = document.getElementById('colorPicker').value;
     const coordSystem = document.getElementById('coordSystem').value;
     const figureSelect = document.getElementById('figureSelect').value;
-    const xCoord = parseFloat(document.getElementById('xCoord').value);
-    const yCoord = parseFloat(document.getElementById('yCoord').value);
-    const size = parseFloat(document.getElementById('size').value);
-    const height = parseFloat(document.getElementById('height').value) || size;
-
-    if (isNaN(xCoord) || isNaN(yCoord) || isNaN(size)) {
-        alert('Por favor, ingresa valores válidos para todas las variables.');
-        return;
-    }
-
-    // Convertir coordenadas polares a cartesianas si es necesario
-    let x = xCoord;
-    let y = yCoord;
+    
+    let x, y, size, height;
+    
     if (coordSystem === 'polar') {
-        x = xCoord + size * Math.cos(yCoord); // yCoord como ángulo
-        y = xCoord - size * Math.sin(yCoord); // xCoord como radio
+        const radius = parseFloat(document.getElementById('radius').value);
+        const angle = parseFloat(document.getElementById('angle').value) * (Math.PI / 180); // Convertir a radianes
+        if (isNaN(radius) || isNaN(angle)) {
+            alert('Por favor, ingresa valores válidos para el radio y el ángulo.');
+            return;
+        }
+        x = radius * Math.cos(angle);
+        y = radius * Math.sin(angle);
+    } else {
+        x = parseFloat(document.getElementById('xCoord').value);
+        y = parseFloat(document.getElementById('yCoord').value);
+        if (isNaN(x) || isNaN(y)) {
+            alert('Por favor, ingresa valores válidos para las coordenadas X e Y.');
+            return;
+        }
+    }
+    
+    size = parseFloat(document.getElementById('size').value);
+    height = parseFloat(document.getElementById('height').value) || size;
+    
+    if (isNaN(size)) {
+        alert('Por favor, ingresa un valor válido para el tamaño.');
+        return;
     }
 
     // Limpiar canvas antes de dibujar
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Dibujar el título en el canvas
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.fillText(canvasTitle, canvas.width / 2, 30);
+
+    // Dibujar la figura seleccionada
+    ctx.fillStyle = color;
+    ctx.strokeStyle = 'black';
+
     if (figureSelect === 'circle') {
-        // Dibujar círculo
         ctx.beginPath();
         ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fillStyle = 'blue';
         ctx.fill();
-        ctx.strokeStyle = 'black';
         ctx.stroke();
     } else if (figureSelect === 'square') {
-        // Dibujar cuadrado
         ctx.beginPath();
         ctx.rect(x, y, size, size);
-        ctx.fillStyle = 'red';
         ctx.fill();
-        ctx.strokeStyle = 'black';
         ctx.stroke();
     } else if (figureSelect === 'rectangle') {
-        // Dibujar rectángulo
         ctx.beginPath();
         ctx.rect(x, y, size, height);
-        ctx.fillStyle = 'green';
         ctx.fill();
-        ctx.strokeStyle = 'black';
         ctx.stroke();
     } else if (figureSelect === 'triangle') {
-        // Dibujar triángulo
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.lineTo(x + size, y);
         ctx.lineTo(x + size / 2, y - height);
         ctx.closePath();
-        ctx.fillStyle = 'orange';
         ctx.fill();
-        ctx.strokeStyle = 'black';
         ctx.stroke();
     } else {
         alert('Selecciona una figura.');
@@ -72,11 +101,11 @@ function clearCanvas() {
 
 function exit() {
     alert('Saliendo.');
-    // Puedes redirigir a otra página si lo deseas
     window.location.href = "about:blank"; // Redirige a una página en blanco
 }
 
-// Mostrar campo de altura si se selecciona un rectángulo o triángulo
+// Event listener para actualizar los campos al cambiar el sistema de coordenadas
+document.getElementById('coordSystem').addEventListener('change', updateCoordFields);
 document.getElementById('figureSelect').addEventListener('change', function() {
     const figureSelect = this.value;
     const heightField = document.getElementById('heightField');
@@ -86,3 +115,6 @@ document.getElementById('figureSelect').addEventListener('change', function() {
         heightField.style.display = 'none';
     }
 });
+
+// Inicializar el formulario con los campos correctos
+updateCoordFields();
