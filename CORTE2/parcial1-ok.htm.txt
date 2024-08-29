@@ -1,0 +1,123 @@
+//FALTA: Dar al usuario a escoger entre Apotema o Lado, Dibujar el vector en con polares, carterianas y dividir el documento en js y htm
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dibujo de Polígono Regular</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        .container {
+            margin-bottom: 20px;
+        }
+        #dibujarButton {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>GRAFICOS DE POLIGONOS REGULARES</h1>
+    <div class="container">
+        <label for="n">Número de lados (n):</label>
+        <input type="number" id="n" min="3" required>
+    </div>
+    <div class="container">
+        <label for="lado">Dimensión del Lado (L):</label>
+        <input type="number" id="lado" step="0.01" required>
+    </div>
+    <div class="container">
+        <label>---El tamaño  del canvas es de 500 x 500---</label>
+    </div>
+    <div class="container">
+        <label for="x">Coordenada X:</label>
+        <input type="number" id="x" required>
+    </div>
+    <div class="container">
+        <label for="y">Coordenada Y:</label>
+        <input type="number" id="y" required>
+    </div>
+    <button id="dibujarButton" onclick="Poligono()">Dibujar Polígono</button>
+    <canvas id="miCanvas" width="500" height="500"></canvas>
+
+    <script>
+        // Definir constantes para el centro del polígono
+        let coordenadaX = 250; // Inicializar con valores predeterminados
+        let coordenadaY = 250;
+
+        // Función Principal
+        function Poligono() {
+            const valores = obtenerValores();
+            if (valores) {
+                coordenadaX = valores.coordenadaX; // Actualizar coordenadas con los valores del formulario
+                coordenadaY = valores.coordenadaY;
+                const vertices = calcularVertices(valores.lado, valores.numeroDeLados);
+                graficarPoligono(vertices);
+            }
+        }
+
+        // Función para obtener valores del formulario
+        function obtenerValores() {
+            // Obtener valores de los campos que digita el usuario
+            const n = parseInt(document.getElementById('n').value); // Número de lados
+            const lado = parseFloat(document.getElementById('lado').value); // Largo del lado
+            const x = parseFloat(document.getElementById('x').value); // Coordenada X
+            const y = parseFloat(document.getElementById('y').value); // Coordenada Y
+
+            // Validar los valores
+            if (!n || !lado || !x || !y || n < 3 || lado <= 0) {
+                alert('Por favor, ingrese valores válidos.');
+                return null;
+            }
+
+            return {
+                lado,
+                numeroDeLados: n,
+                coordenadaX: x,
+                coordenadaY: y
+            };
+        }
+
+        // Función para calcular las coordenadas de los vértices del polígono
+        function calcularVertices(lado, numeroDeLados) {
+            const x = coordenadaX;
+            const y = coordenadaY;
+            const apotema = (lado / 2) / Math.tan(Math.PI / numeroDeLados);
+          //Este radio es el que contiene al poligono, donde estan los vertices con respecto al centro
+            const radio = apotema / Math.cos(Math.PI / numeroDeLados);
+            const angulo = 2 * Math.PI / numeroDeLados;
+            const rotacion = Math.PI / 2;
+
+            const vertices = [];
+            for (let i = 0; i < numeroDeLados; i++) {
+                const vx = x + radio * Math.cos(i * angulo - rotacion);
+                const vy = y + radio * Math.sin(i * angulo - rotacion);
+                vertices.push([vx, vy]);
+            }
+            return vertices;
+        }
+
+        // Función para graficar el polígono
+        function graficarPoligono(vertices) {
+            const canvas = document.getElementById('miCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Limpiar el canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Graficar el polígono
+            ctx.beginPath();
+            vertices.forEach((vertex, index) => {
+                if (index === 0) {
+                    ctx.moveTo(vertex[0], vertex[1]); // Mover al primer vértice
+                } else {
+                    ctx.lineTo(vertex[0],vertex[1]); // Dibujar línea a los siguientes vértices
+                }
+            });
+            ctx.closePath(); // Cerrar el camino
+            ctx.stroke(); // Dibujar el polígono
+        }
+    </script>
+</body>
+</html>
