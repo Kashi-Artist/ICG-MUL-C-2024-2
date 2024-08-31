@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dibujo de Polígono Regular</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        .container {
+            margin-bottom: 20px;
+        }
+        #dibujarButton {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>GRAFICOS DE POLIGONOS REGULARES</h1>
+    <div class="container">
+        <label for="n">Número de lados (n):</label>
+        <input type="number" id="n" min="3" required>
+    </div>
+    <div class="container">
+        <label for="dimension">Escoge entre Apotema o Lado:</label>
+        <select id="dimensionType">
+            <option value="lado">Lado (L)</option>
+            <option value="apotema">Apotema (A)</option>
+        </select>
+        <input type="number" id="dimensionValue" step="0.01" required>
+    </div>
+    <div class="container">
+        <label>---El tamaño del canvas es de 1000 x 1000---</label>
+    </div>
+    <div class="container">
+        <label for="coordenadaTipo">Tipo de coordenadas:</label>
+        <select id="coordenadaTipo" onchange="actualizarCampos()">
+            <option value="cartesiana">Cartesiana</option>
+            <option value="polar">Polar</option>
+        </select>
+    </div>
+    <div class="container" id="cartesianaInputs">
+        <label for="x">Coordenada X:</label>
+        <input type="number" id="x" required>
+        <label for="y">Coordenada Y:</label>
+        <input type="number" id="y" required>
+    </div>
+    <div class="container" id="polarInputs" style="display: none;">
+        <label for="radio">Radio:</label>
+        <input type="number" id="radio" step="0.01" required>
+        <label for="angulo">Ángulo (en grados):</label>
+        <input type="number" id="angulo" step="0.01" required>
+    </div>
+    <button id="dibujarButton" onclick="iniciarConstruccion()">Nuevo Polígono</button>
+
+    <!-- Nuevo título "Tablero" antes del canvas -->
+    <h2>Tablero</h2>
+
+    <canvas id="miCanvas" width="1000" height="1000"></canvas>
+
+    <script src="parcial1-ok.js"></script>
+</body>
+</html>
