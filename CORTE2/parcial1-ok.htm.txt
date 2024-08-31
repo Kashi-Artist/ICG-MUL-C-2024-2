@@ -1,4 +1,3 @@
-//FALTA: Dar al usuario a escoger entre Apotema o Lado, Dibujar el vector en con polares, carterianas y dividir el documento en js y htm
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -24,11 +23,15 @@
         <input type="number" id="n" min="3" required>
     </div>
     <div class="container">
-        <label for="lado">Dimensión del Lado (L):</label>
-        <input type="number" id="lado" step="0.01" required>
+        <label for="dimension">Escoge entre Apotema o Lado:</label>
+        <select id="dimensionType">
+            <option value="lado">Lado (L)</option>
+            <option value="apotema">Apotema (A)</option>
+        </select>
+        <input type="number" id="dimensionValue" step="0.01" required>
     </div>
     <div class="container">
-        <label>---El tamaño  del canvas es de 500 x 500---</label>
+        <label>---El tamaño del canvas es de 500 x 500---</label>
     </div>
     <div class="container">
         <label for="x">Coordenada X:</label>
@@ -38,85 +41,140 @@
         <label for="y">Coordenada Y:</label>
         <input type="number" id="y" required>
     </div>
-    <button id="dibujarButton" onclick="Poligono()">Dibujar Polígono</button>
+    <button id="dibujarButton" onclick="iniciarConstruccion()">Dibujar Polígono</button>
     <canvas id="miCanvas" width="500" height="500"></canvas>
 
     <script>
-        // Definir constantes para el centro del polígono
-        let coordenadaX = 250; // Inicializar con valores predeterminados
-        let coordenadaY = 250;
+        class Cartesiana {
+            constructor(x, y) {
+                this._x = x;
+                this._y = y;
+            }
 
-        // Función Principal
-        function Poligono() {
-            const valores = obtenerValores();
-            if (valores) {
-                coordenadaX = valores.coordenadaX; // Actualizar coordenadas con los valores del formulario
-                coordenadaY = valores.coordenadaY;
-                const vertices = calcularVertices(valores.lado, valores.numeroDeLados);
-                graficarPoligono(vertices);
+            get x() {
+                return this._x;
+            }
+
+            get y() {
+                return this._y;
+            }
+
+            set x(value) {
+                this._x = value;
+            }
+
+            set y(value) {
+                this._y = value;
             }
         }
 
-        // Función para obtener valores del formulario
-        function obtenerValores() {
-            // Obtener valores de los campos que digita el usuario
-            const n = parseInt(document.getElementById('n').value); // Número de lados
-            const lado = parseFloat(document.getElementById('lado').value); // Largo del lado
-            const x = parseFloat(document.getElementById('x').value); // Coordenada X
-            const y = parseFloat(document.getElementById('y').value); // Coordenada Y
-
-            // Validar los valores
-            if (!n || !lado || !x || !y || n < 3 || lado <= 0) {
-                alert('Por favor, ingrese valores válidos.');
-                return null;
+        class Polar {
+            constructor(radio, angulo) {
+                this._radio = radio;
+                this._angulo = angulo;
             }
 
-            return {
-                lado,
-                numeroDeLados: n,
-                coordenadaX: x,
-                coordenadaY: y
-            };
-        }
-
-        // Función para calcular las coordenadas de los vértices del polígono
-        function calcularVertices(lado, numeroDeLados) {
-            const x = coordenadaX;
-            const y = coordenadaY;
-            const apotema = (lado / 2) / Math.tan(Math.PI / numeroDeLados);
-          //Este radio es el que contiene al poligono, donde estan los vertices con respecto al centro
-            const radio = apotema / Math.cos(Math.PI / numeroDeLados);
-            const angulo = 2 * Math.PI / numeroDeLados;
-            const rotacion = Math.PI / 2;
-
-            const vertices = [];
-            for (let i = 0; i < numeroDeLados; i++) {
-                const vx = x + radio * Math.cos(i * angulo - rotacion);
-                const vy = y + radio * Math.sin(i * angulo - rotacion);
-                vertices.push([vx, vy]);
+            get radio() {
+                return this._radio;
             }
-            return vertices;
+
+            get angulo() {
+                return this._angulo;
+            }
+
+            set radio(value) {
+                this._radio = value;
+            }
+
+            set angulo(value) {
+                this._angulo = value;
+            }
+
+            aCartesiana() {
+                const x = this._radio * Math.cos(this._angulo);
+                const y = this._radio * Math.sin(this._angulo);
+                return new Cartesiana(x, y);
+            }
         }
 
-        // Función para graficar el polígono
-        function graficarPoligono(vertices) {
-            const canvas = document.getElementById('miCanvas');
-            const ctx = canvas.getContext('2d');
+        class ConstruccionPoligono {
+            constructor() {
+                this.canvas = document.getElementById('miCanvas');
+                this.ctx = this.canvas.getContext('2d');
+            }
 
-            // Limpiar el canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            obtenerValores() {
+                const n = parseInt(document.getElementById('n').value);
+                const dimensionType = document.getElementById('dimensionType').value;
+                const dimensionValue = parseFloat(document.getElementById('dimensionValue').value);
+                const x = parseFloat(document.getElementById('x').value);
+                const y = parseFloat(document.getElementById('y').value);
 
-            // Graficar el polígono
-            ctx.beginPath();
-            vertices.forEach((vertex, index) => {
-                if (index === 0) {
-                    ctx.moveTo(vertex[0], vertex[1]); // Mover al primer vértice
-                } else {
-                    ctx.lineTo(vertex[0],vertex[1]); // Dibujar línea a los siguientes vértices
+                if (!n || !dimensionValue || !x || !y || n < 3 || dimensionValue <= 0) {
+                    alert('Por favor, ingrese valores válidos.');
+                    return null;
                 }
-            });
-            ctx.closePath(); // Cerrar el camino
-            ctx.stroke(); // Dibujar el polígono
+
+                const esLado = dimensionType === "lado";
+
+                return {
+                    dimension: dimensionValue,
+                    numeroDeLados: n,
+                    coordenadaX: x,
+                    coordenadaY: y,
+                    esLado
+                };
+            }
+
+            calcularVertices(valores) {
+                const { dimension, numeroDeLados, esLado, coordenadaX, coordenadaY } = valores;
+                let radio;
+
+                if (esLado) {
+                    const apotema = (dimension / 2) / Math.tan(Math.PI / numeroDeLados);
+                    radio = apotema / Math.cos(Math.PI / numeroDeLados);
+                } else {
+                    radio = dimension / Math.cos(Math.PI / numeroDeLados);
+                }
+
+                const angulo = 2 * Math.PI / numeroDeLados;
+                const rotacion = Math.PI / 2;
+
+                const vertices = [];
+                for (let i = 0; i < numeroDeLados; i++) {
+                    const polar = new Polar(radio, i * angulo - rotacion);
+                    const cartesiana = polar.aCartesiana();
+                    vertices.push([coordenadaX + cartesiana.x, coordenadaY + cartesiana.y]);
+                }
+                return vertices;
+            }
+
+            graficarPoligono(vertices) {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.beginPath();
+                vertices.forEach((vertex, index) => {
+                    if (index === 0) {
+                        this.ctx.moveTo(vertex[0], vertex[1]);
+                    } else {
+                        this.ctx.lineTo(vertex[0], vertex[1]);
+                    }
+                });
+                this.ctx.closePath();
+                this.ctx.stroke();
+            }
+
+            construir() {
+                const valores = this.obtenerValores();
+                if (valores) {
+                    const vertices = this.calcularVertices(valores);
+                    this.graficarPoligono(vertices);
+                }
+            }
+        }
+
+        function iniciarConstruccion() {
+            const construccion = new ConstruccionPoligono();
+            construccion.construir();
         }
     </script>
 </body>
