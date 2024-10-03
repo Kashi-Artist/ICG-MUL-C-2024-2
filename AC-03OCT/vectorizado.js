@@ -22,7 +22,7 @@ class GeneradorPuntos {
     static generarPuntos(numPuntos) {
         const puntos = [];
         for (let i = 0; i < numPuntos; i++) {
-            const x = Math.floor(Math.random() * 700) + 50; // Mantener los puntos dentro del canvas
+            const x = Math.floor(Math.random() * 700) + 50; // Mantener los puntos dentro del SVG
             const y = Math.floor(Math.random() * 600) + 50;
             puntos.push(new Punto(x, y));
         }
@@ -73,30 +73,37 @@ class Ordenador {
     }
 }
 
-// Clase para dibujar el polígono
+// Clase para dibujar el polígono utilizando SVG
 class DibujadorPoligono {
     static dibujar(puntos) {
-        const canvas = document.getElementById('polygonCanvas');
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const svg = document.getElementById('polygonSvg');
+        svg.innerHTML = ''; // Limpiar el SVG
 
         // Dibuja los puntos como cuadrados
         for (let i = 0; i < puntos.length; i++) {
             const x = puntos[i].getX();
             const y = puntos[i].getY();
-            ctx.fillStyle = 'black'; // Color del punto (cuadrado negro)
-            ctx.fillRect(x - 5, y - 5, 10, 10); // Dibuja un cuadrado de 10x10
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", x - 5);
+            rect.setAttribute("y", y - 5);
+            rect.setAttribute("width", 10);
+            rect.setAttribute("height", 10);
+            rect.setAttribute("fill", "black"); // Color del punto (cuadrado negro)
+            svg.appendChild(rect);
         }
 
         // Dibuja el polígono conectando los puntos
-        ctx.beginPath();
-        ctx.moveTo(puntos[0].getX(), puntos[0].getY());
+        let pathData = `M ${puntos[0].getX()} ${puntos[0].getY()}`;
         for (let i = 1; i < puntos.length; i++) {
-            ctx.lineTo(puntos[i].getX(), puntos[i].getY());
+            pathData += ` L ${puntos[i].getX()} ${puntos[i].getY()}`;
         }
-        ctx.closePath();
-        ctx.strokeStyle = 'blue'; // Color de la línea
-        ctx.stroke();
+        pathData += ' Z'; // Cierra el polígono
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", pathData);
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", "blue"); // Color de la línea
+        svg.appendChild(path);
     }
 }
 
@@ -134,6 +141,11 @@ function main() {
     const tipoPoligono = AnalizadorPoligono.esConvexo(puntos);
     document.getElementById('result').innerText = `El polígono es ${tipoPoligono}.`;
 }
+
+// Evento para el botón de generar
+document.getElementById('generateButton').addEventListener('click', () => {
+    main();
+});
 
 // Evento para el botón de restaurar
 document.getElementById('restoreButton').addEventListener('click', () => {

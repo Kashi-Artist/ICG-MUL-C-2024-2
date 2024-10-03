@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dibujo de Polígonos con SVG</title>
+    <script src="vectorizado.js" defer></script>
+    <style>
+        #polygonSvg {
+            border: 1px solid black;
+            width: 800px; /* Ajustar el tamaño según sea necesario */
+            height: 700px; /* Ajustar el tamaño según sea necesario */
+        }
+    </style>
+</head>
+<body>
+    <h1>Dibujo de Polígonos</h1>
+    <label for="cantidadPuntos">Selecciona la cantidad de puntos (3-20): </label>
+    <select id="cantidadPuntos">
+        <script>
+            for (let i = 3; i <= 20; i++) {
+                document.write(`<option value="${i}">${i}</option>`);
+            }
+        </script>
+    </select>
+    <button id="generateButton">Generar Polígono</button>
+    <div id="result"></div>
+    <svg id="polygonSvg"></svg>
+</body>
+</html>
